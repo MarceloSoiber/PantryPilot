@@ -1,44 +1,29 @@
-# Quick Recipes Corpus v0
+# Quick Recipes Corpus v1
 
-This is the PantryPilot seed corpus for recipes that declare a total preparation and
-cooking time of 30 minutes or less.
+This seed corpus contains 100 recipes selected for quick preparation: no more than
+30 declared minutes, 3–12 ingredients and at most 7 steps. Drink records are excluded.
 
-## Contents
+## Languages and fidelity
 
-- `quick-recipes-v0.json`: 35 complete, structured recipe records.
-- Languages supplied by the source: English and Russian.
-- Each record retains its title, summary, ingredients, quantities, steps, timing,
-  servings, dietary tags, nutrition estimate, storage notes and source-country data
-  when supplied upstream.
+- `text.en` is source text from the licensed upstream corpus.
+- `text.pt-BR` is deliberately `null` until a local LM Studio translation passes the
+  deterministic and semantic fidelity checks.
+- No Russian text is distributed in this version.
+- The application may answer in Portuguese from recovered English evidence, but it
+  must not claim that an unpublished Portuguese translation is source text.
 
-## RAG ingestion guidance
-
-Use one recipe as the source record, then generate separate retrieval chunks for:
-
-1. overview and constraints;
-2. ingredients and substitutions;
-3. preparation steps;
-4. safety and storage notes.
-
-Every generated chunk must retain the recipe `slug` plus the provenance fields at the
-root of the JSON. Do not use this file as training data without keeping attribution
-and license metadata available to the retrieval layer.
+See [`docs/CONTENT_FIDELITY_POLICY.md`](../../docs/CONTENT_FIDELITY_POLICY.md) for
+the rules that govern translation and answer generation.
 
 ## Source and license
 
-The dataset is a time-filtered derivative of **UniTools World Recipes v2.0.0**:
+The corpus is a selected derivative of the
+[Open Recipe Corpus](https://github.com/Rippy1911/open-recipe-corpus):
 
-- Source: <https://theunitools.com/data/unitools-recipes-v1.json>
-- Source homepage: <https://theunitools.com/en/data>
-- Attribution: **UniTools — theunitools.com**
+- Data source: `data/recipes.jsonl` and `data/text/en.jsonl`
 - License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+- Per-recipe attribution, source URL, revision and credit line are retained in each
+  record under `source.provenance`.
 
-The filter used by PantryPilot preserves only entries whose declared preparation time
-plus cooking time is at most 30 minutes. The corpus and any derivative distribution
-must retain attribution and be shared under compatible CC BY-SA terms.
-
-## Limitations
-
-Recipe metadata is source-provided and has not yet been independently reviewed for
-allergens, dietary suitability, food safety or cultural authenticity. The application
-must show safety guidance and avoid making allergy or medical guarantees.
+Any translated or derived distribution must preserve those per-recipe credits and use
+compatible share-alike terms.

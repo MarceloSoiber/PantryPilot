@@ -1,9 +1,10 @@
-# License notice for `data/corpus`
+# License notice for `data/corpus/quick-recipes-v1.json`
 
-`quick-recipes-v0.json` is distributed under the
-[Creative Commons Attribution-ShareAlike 4.0 International license](https://creativecommons.org/licenses/by-sa/4.0/).
+The corpus is a selected derivative of the
+[Open Recipe Corpus](https://github.com/Rippy1911/open-recipe-corpus) and is
+distributed under the [Creative Commons Attribution-ShareAlike 4.0 International
+license](https://creativecommons.org/licenses/by-sa/4.0/).
 
-Attribution: **UniTools — theunitools.com**.
-
-This file is a selected derivative of UniTools World Recipes v2.0.0. PantryPilot
-retains the source attribution and applies the same CC BY-SA 4.0 terms to this corpus.
+Every recipe retains its upstream attribution, URL, revision and license in
+`source.provenance`. Those records are mandatory when reusing, translating or
+redistributing the data.
