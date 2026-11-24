@@ -135,7 +135,7 @@ repositório público.
 | D-002 | Confirmada | Sem cloud e sem serviços pagos | GCP, AWS, Azure ou outro provedor | Novo provedor exige autorização explícita, orçamento, limites de gasto e ADR própria |
 | D-003 | Confirmada | `pantrypilot-quick-recipes-v1`: 100 receitas rápidas de origem polonesa, licenciadas e com proveniência por registro | Outros recortes ou fontes futuras | Define o dataset da demo e o cenário de referência; revisar ao ampliar corpus ou política de fontes |
 | D-004 | Confirmada | API: TypeScript, Fastify, Zod e npm workspaces; UI e LLM continuam em aberto | A definir conforme as próximas jornadas | Ver ADR-002; evita antecipar a stack de UI ou LLM |
-| D-005 | Pendente | Armazenamento vetorial | PostgreSQL + pgvector ou banco dedicado | Decidir após volume e consultas iniciais |
+| D-005 | Confirmada | PostgreSQL + pgvector com Drizzle; documentos do corpus usam embeddings de 768 dimensões e índice HNSW por distância de cosseno | Banco vetorial dedicado | Mantém a demo local simples; trocar o modelo de embeddings exige uma migration e reindexação documentadas |
 
 ## Próxima conversa de decisão
 

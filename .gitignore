@@ -12,6 +12,7 @@ docs/PROJECT_REFERENCES_LOCAL.md
 # Installed JavaScript dependencies.
 node_modules/
 .turbo/
+dist/
 
 # Local containers and database state.
 .data/
