@@ -1,0 +1,18 @@
+{
+  "name": "pantry-pilot",
+  "private": true,
+  "packageManager": "npm@10.9.8",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "TURBO_TELEMETRY_DISABLED=1 turbo dev",
+    "build": "TURBO_TELEMETRY_DISABLED=1 turbo build",
+    "typecheck": "TURBO_TELEMETRY_DISABLED=1 turbo typecheck",
+    "test": "TURBO_TELEMETRY_DISABLED=1 turbo test"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.5"
+  }
+}

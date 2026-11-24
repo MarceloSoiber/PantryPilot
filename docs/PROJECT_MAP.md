@@ -101,7 +101,7 @@ até 30 minutos e sem lactose.”*
 | Suposição | Lançamento | Demo de portfólio com carga baixa | Permite começar com monólito modular |
 | Decidido | Corpus inicial | `pantrypilot-quick-recipes-v1`: 100 receitas rápidas de origem polonesa, com texto distribuído em inglês e proveniência por registro | Reduz risco de qualidade e direitos autorais |
 | Em aberto | Fontes permitidas | Sites, livros, APIs ou base autoral | Define coleta, licença e política de citação |
-| Em aberto | Stack | Ainda não escolhida | Decisão após o escopo e competências serem confirmados |
+| Decidido | Stack inicial | TypeScript, Fastify, Zod e npm workspaces | Base local mínima para API e contratos compartilhados; ver ADR-002 |
 | Em aberto | Restrições suportadas | Quais filtros entrarão no MVP | Necessário para modelagem de dados e guardrails |
 
 ## 7. Próxima decisão

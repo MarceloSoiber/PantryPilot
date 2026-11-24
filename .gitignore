@@ -9,5 +9,9 @@ docs/PROJECT_REFERENCES_LOCAL.md
 .env.*
 !.env.example
 
+# Installed JavaScript dependencies.
+node_modules/
+.turbo/
+
 # Local containers and database state.
 .data/

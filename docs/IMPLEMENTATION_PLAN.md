@@ -134,7 +134,7 @@ repositório público.
 | D-001 | Confirmada | Execução local por containers | VMs ou serviços de cloud | Manter `compose` local, dados de exemplo e modo sem rede |
 | D-002 | Confirmada | Sem cloud e sem serviços pagos | GCP, AWS, Azure ou outro provedor | Novo provedor exige autorização explícita, orçamento, limites de gasto e ADR própria |
 | D-003 | Confirmada | `pantrypilot-quick-recipes-v1`: 100 receitas rápidas de origem polonesa, licenciadas e com proveniência por registro | Outros recortes ou fontes futuras | Define o dataset da demo e o cenário de referência; revisar ao ampliar corpus ou política de fontes |
-| D-004 | Pendente | Stack da UI/API e LLM | A definir após o escopo | Evitar dependências prematuras |
+| D-004 | Confirmada | API: TypeScript, Fastify, Zod e npm workspaces; UI e LLM continuam em aberto | A definir conforme as próximas jornadas | Ver ADR-002; evita antecipar a stack de UI ou LLM |
 | D-005 | Pendente | Armazenamento vetorial | PostgreSQL + pgvector ou banco dedicado | Decidir após volume e consultas iniciais |
 
 ## Próxima conversa de decisão

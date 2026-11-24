@@ -1,0 +1,25 @@
+<a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+
+<main id="main-content">
+  <section class="hero" aria-labelledby="page-title">
+    <p class="eyebrow">PANTRYPILOT · DESPENSA INTELIGENTE</p>
+    <h1 id="page-title">Cozinhe bem<br /><em>com o que já tem.</em></h1>
+    <p class="intro">Uma cozinha mais prática começa pela sua despensa. O PantryPilot está preparando sugestões claras, rastreáveis e feitas para a sua rotina.</p>
+    <div class="status-panel" aria-live="polite">
+      <div class="status-copy">
+        <span class="status-dot" [class.is-loading]="health.isLoading()" [class.is-down]="health.value()?.status === 'degraded' || health.status() === 'error'"></span>
+        <div>
+          <p class="status-label">Estado do serviço</p>
+          @if (health.isLoading()) { <p class="status-value">Verificando a cozinha…</p> } @else if (health.value()?.status === 'ok') { <p class="status-value">Tudo pronto para começar</p> } @else if (health.value()?.status === 'degraded') { <p class="status-value">API disponível, banco em recuperação</p> } @else { <p class="status-value">Não foi possível alcançar a API</p> }
+        </div>
+      </div>
+      <button type="button" (click)="reloadHealth()">Tentar novamente</button>
+    </div>
+  </section>
+
+  <aside class="pantry-card" aria-label="Prévia da despensa">
+    <div class="card-topline"><span>DESPENSA DE HOJE</span><span>01 / 03</span></div>
+    <ul><li><span>Grão-de-bico</span><b>01 lata</b></li><li><span>Tomate</span><b>03 un.</b></li><li><span>Arroz</span><b>01 xíc.</b></li><li><span>Cebola</span><b>01 un.</b></li></ul>
+    <div class="card-footer">Em breve: sugestões a partir destes ingredientes.</div>
+  </aside>
+</main>

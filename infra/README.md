@@ -27,22 +27,21 @@ orçamento e mecanismo documentado para interromper o consumo.
 
 ## Banco local
 
-O [compose.yaml](../compose.yaml) disponibiliza somente o serviço `db`, com PostgreSQL
-16 e pgvector. Ele não publica portas no host; futuras aplicações no mesmo Compose
-usarão a rede interna. Nenhum serviço de cloud, API externa ou imagem de aplicação é
-iniciado.
+O [docker-compose.yml](../docker-compose.yml) disponibiliza PostgreSQL 16 + pgvector,
+API e Web para desenvolvimento local. A API usa a rede interna para chegar ao banco
+em `db`; o navegador acessa a API pelo proxy do Web. Nenhum serviço de cloud é usado.
 
 1. Copie `.env.example` para `.env` e escolha uma senha local.
 2. Execute `docker compose --env-file .env up -d db`.
-3. Confirme a saúde com `docker compose --env-file .env ps`.
-4. Para interromper sem apagar dados: `docker compose --env-file .env stop db`.
+3. Inicie a stack: `docker-compose --env-file .env up --build`.
+4. Confirme a saúde com `docker-compose --env-file .env ps`.
 
 Enquanto não houver migrations, a extensão `vector` está disponível na imagem, mas não
 é habilitada automaticamente. A primeira migration do schema deverá executar
 `CREATE EXTENSION IF NOT EXISTS vector;` de forma versionada.
 
-O volume `pantry_pilot_postgres_data` preserva dados entre reinicializações. Removê-lo
-apaga o banco local; faça isso somente quando quiser reiniciar a demonstração.
+Não há volume declarado: a base é efêmera e serve somente ao desenvolvimento. Ao
+remover o container `db`, os dados locais são descartados.
 
 ## Próxima implementação
 
