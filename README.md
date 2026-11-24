@@ -11,12 +11,15 @@ traceable evidence, explicit creative adaptations and safety-oriented guardrails
 
 ## Project status
 
-Architecture and product discovery are in progress. The first version will focus on
-quick pantry recipes and transparent ingredient substitutions.
+Architecture and product discovery are in progress. The repository already contains a
+licensed seed corpus and a framework-neutral project foundation; the application stack
+will be selected before implementation begins. The first version will focus on quick
+pantry recipes and transparent ingredient substitutions.
 
 ## Documentation
 
 - [Project map](docs/PROJECT_MAP.md)
+- [Foundation guide](docs/FOUNDATION.md)
 - [Engineering and course references](docs/PROJECT_REFERENCES.md)
 
 ## Inspiration

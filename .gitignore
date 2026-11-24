@@ -3,3 +3,11 @@ docs/PROJECT_REFERENCES_LOCAL.md
 
 # Temporary local housekeeping.
 .gitignore.local-backup
+
+# Local configuration and state. Keep .env.example versioned when the application is introduced.
+.env
+.env.*
+!.env.example
+
+# Local containers and database state.
+.data/

@@ -73,7 +73,7 @@ flowchart LR
     Q --> R[Busca receitas e técnicas no corpus]
     R --> C{Há evidência suficiente?}
     C -- Sim --> A[Propõe receita com fontes]
-    C -- Não --> W[Consulta fontes culinárias permitidas]
+    C -- Não --> W[Informa cobertura insuficiente]
     W --> A
     A --> S[Mostra passos, substituições e avisos]
 ```
@@ -99,13 +99,13 @@ até 30 minutos e sem lactose.”*
 | Decidido | Público inicial | Pessoas que cozinham em casa | Orienta jornada e linguagem |
 | Decidido | Referência | AI Researcher (capstone) | Padrão de RAG confiável e qualidade operacional |
 | Suposição | Lançamento | Demo de portfólio com carga baixa | Permite começar com monólito modular |
-| Suposição | Corpus inicial | Pequeno, curado e com licenças/fontes registradas | Reduz risco de qualidade e direitos autorais |
+| Decidido | Corpus inicial | `pantrypilot-quick-recipes-v1`: 100 receitas rápidas de origem polonesa, com texto distribuído em inglês e proveniência por registro | Reduz risco de qualidade e direitos autorais |
 | Em aberto | Fontes permitidas | Sites, livros, APIs ou base autoral | Define coleta, licença e política de citação |
 | Em aberto | Stack | Ainda não escolhida | Decisão após o escopo e competências serem confirmados |
 | Em aberto | Restrições suportadas | Quais filtros entrarão no MVP | Necessário para modelagem de dados e guardrails |
 
 ## 7. Próxima decisão
 
-Definir o **recorte do corpus inicial**: qual cozinha/estilo e quais fontes licenciadas
-formarão a base da primeira demo. Essa decisão determina a qualidade das respostas e
-evita começar pela tecnologia antes do conteúdo que ela precisa servir.
+Definir a **stack mínima local** para transformar o corpus inicial em uma demo. O
+cenário de referência está documentado em `docs/DEMO_REFERENCE.md` e evita começar por
+tecnologia antes de estabelecer a evidência que a aplicação deve recuperar.
