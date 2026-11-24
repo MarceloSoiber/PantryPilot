@@ -5,12 +5,15 @@ This seed corpus contains 100 recipes selected for quick preparation: no more th
 
 ## Languages and fidelity
 
-- `text.en` is source text from the licensed upstream corpus.
+- `text.en` is the English text distributed by the licensed upstream corpus. For this
+  seed, it is machine-translated from Polish; the original language remains in
+  `source.source_lang` and the translation metadata is retained in each record.
 - `text.pt-BR` is deliberately `null` until a local LM Studio translation passes the
   deterministic and semantic fidelity checks.
 - No Russian text is distributed in this version.
-- The application may answer in Portuguese from recovered English evidence, but it
-  must not claim that an unpublished Portuguese translation is source text.
+- The application may answer in Portuguese from recovered evidence, but it must
+  identify the result as a grounded translation or summary and never claim that an
+  unpublished Portuguese text is source text.
 
 See [`docs/CONTENT_FIDELITY_POLICY.md`](../../docs/CONTENT_FIDELITY_POLICY.md) for
 the rules that govern translation and answer generation.

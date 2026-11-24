@@ -7,7 +7,7 @@
 ## Direção confirmada
 
 - **Produto:** assistente culinário baseado em ingredientes, tempo e preferências.
-- **Entrega:** aplicação cloud-native distribuída em containers.
+- **Entrega:** aplicação local distribuída em containers, sem recursos de cloud.
 - **Desenvolvimento:** paridade local por containers, sem depender da cloud para os
   testes determinísticos.
 - **Referência de engenharia:** padrões do AI Researcher adaptados ao domínio
@@ -24,14 +24,14 @@ flowchart LR
     A --> G[Orquestração do agente]
     G --> R[Corpus e recuperação]
     G --> M[LLM configurável]
-    R --> D[(Banco gerenciado + vetores)]
-    G -. contexto insuficiente .-> S[Busca em fontes aprovadas]
+    R --> D[(Banco local + vetores)]
+    G -. contexto insuficiente .-> S[Informa cobertura insuficiente]
     A --> O[Logs, métricas e traces]
 ```
 
 O diagrama descreve responsabilidades, não uma escolha definitiva de fornecedores ou
-frameworks. O ponto de partida recomendado é um monólito modular em um container de
-API, com serviços gerenciados apenas onde forem necessários.
+frameworks. O ponto de partida recomendado é uma única aplicação modular em container,
+com dados e dependências executados localmente.
 
 ## Etapas
 
@@ -43,8 +43,8 @@ conteúdo e segurança.
 - Escolher o recorte do corpus inicial e suas fontes licenciadas.
 - Definir quais preferências e restrições entram no MVP.
 - Definir a política de fontes, atribuição e conteúdo web com TTL.
-- Escolher a cloud-alvo; GCP/Cloud Run é a hipótese inicial por proximidade com o
-  capstone, ainda sujeita a confirmação.
+- Ambiente definido: execução exclusivamente local, sem recursos de cloud ou serviços
+  pagos. Ver ADR-001 para o limite de custo e integrações externas.
 
 **Pronto quando:** uma pergunta de demonstração, uma resposta esperada e as fontes
 que a sustentam estiverem documentadas.
@@ -100,17 +100,21 @@ corretos com fonte e metadados.
 **Pronto quando:** os limites de segurança são testados, testes unitários não usam
 rede e os fluxos críticos têm rastreabilidade.
 
-### 5. Entrega cloud-native
+### 5. Execução local reproduzível
 
-**Objetivo:** publicar a demo usando os mesmos conceitos localmente validados.
+**Objetivo:** demonstrar o projeto localmente sem credenciais, rede ou custos de
+infraestrutura.
 
-- Endurecer as imagens de container e publicar no registry.
-- Provisionar segredos e banco gerenciados; nunca embutir credenciais em imagens.
-- Criar CI/CD, ambiente de staging, smoke test e plano de rollback.
-- Usar infraestrutura como código quando os recursos de cloud forem definidos.
+- Endurecer as imagens de container e documentar o build local.
+- Executar a demo com Docker Compose, dados de exemplo e variáveis locais não
+  versionadas.
+- Garantir que os testes determinísticos não façam chamadas de rede ou a serviços
+  pagos.
+- Documentar como encerrar os containers e limpar apenas os volumes de demonstração,
+  quando necessário.
 
-**Pronto quando:** uma implantação pode ser repetida, verificada e revertida com
-passos documentados.
+**Pronto quando:** a demo pode ser iniciada e encerrada localmente com passos
+documentados, sem credenciais de cloud ou cobrança.
 
 ### 6. Publicação do portfólio
 
@@ -127,14 +131,14 @@ repositório público.
 
 | ID | Estado | Decisão | Alternativas | Consequência / próximo gatilho |
 | --- | --- | --- | --- | --- |
-| D-001 | Confirmada | Entrega cloud-native por containers | VMs ou execução exclusiva local | Manter `compose` local e imagem pronta para serviço gerenciado |
-| D-002 | Pendente | Cloud-alvo | GCP, AWS, Azure ou outra | Define CI/CD, registry, segredos e banco gerenciado |
-| D-003 | Pendente | Recorte e fontes do corpus | Cozinha brasileira, vegetariana ou global rápida | Bloqueia a ingestão e a política de licença |
-| D-004 | Pendente | Stack da UI/API e LLM | A definir após o escopo | Evitar dependências prematuras |
+| D-001 | Confirmada | Execução local por containers | VMs ou serviços de cloud | Manter `compose` local, dados de exemplo e modo sem rede |
+| D-002 | Confirmada | Sem cloud e sem serviços pagos | GCP, AWS, Azure ou outro provedor | Novo provedor exige autorização explícita, orçamento, limites de gasto e ADR própria |
+| D-003 | Confirmada | `pantrypilot-quick-recipes-v1`: 100 receitas rápidas de origem polonesa, licenciadas e com proveniência por registro | Outros recortes ou fontes futuras | Define o dataset da demo e o cenário de referência; revisar ao ampliar corpus ou política de fontes |
+| D-004 | Confirmada | API: TypeScript, Fastify, Zod e npm workspaces; UI e LLM continuam em aberto | A definir conforme as próximas jornadas | Ver ADR-002; evita antecipar a stack de UI ou LLM |
 | D-005 | Pendente | Armazenamento vetorial | PostgreSQL + pgvector ou banco dedicado | Decidir após volume e consultas iniciais |
 
 ## Próxima conversa de decisão
 
-Definir **D-003: o corpus inicial**. A recomendação atual é uma coleção pequena de
-receitas rápidas para despensa, com fontes que possam ser atribuídas e publicadas.
-Depois dela, decidiremos a cloud-alvo e a stack mínima para a etapa 1.
+Definir **D-004: a stack mínima local**. O corpus inicial e o cenário de referência já
+estão definidos; a próxima escolha deve permitir implementar o fluxo sem rede e sem
+serviços pagos.
