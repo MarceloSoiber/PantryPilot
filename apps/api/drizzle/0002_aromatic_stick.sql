@@ -1,0 +1,1 @@
+ALTER TABLE "web_documents" ADD COLUMN "content_hash" text;

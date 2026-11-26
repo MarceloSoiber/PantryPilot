@@ -68,6 +68,7 @@ export const webDocuments = pgTable(
     title: text('title').notNull(),
     content: text('content').notNull(),
     sourceUrl: text('source_url').notNull(),
+    contentHash: text('content_hash'),
     fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull(),
     expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
     embedding: vector('embedding', { dimensions: 768 }).notNull(),

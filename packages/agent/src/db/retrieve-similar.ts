@@ -70,6 +70,7 @@ export type WebDocumentsTable = PgTable & {
   title: AnyPgColumn;
   content: AnyPgColumn;
   sourceUrl: AnyPgColumn;
+  contentHash: AnyPgColumn;
   fetchedAt: AnyPgColumn;
   expiresAt: AnyPgColumn;
   embedding: AnyPgColumn;

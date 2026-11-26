@@ -1,10 +1,11 @@
+import { createHash } from 'node:crypto';
 import type { EmbeddingClient, QuestionState } from './retrieve.js';
 import type { SearchProvider } from '../search/types.js';
 
 const defaultChunkSize = 1_000;
 const defaultChunkOverlap = 100;
 const defaultResultLimit = 3;
-const defaultTtlDays = 7;
+const defaultTtlDays = 90;
 
 export interface WebSearchState extends QuestionState {
   missingAspects: readonly string[];
@@ -21,8 +22,22 @@ export interface WebDocumentToStore {
   embedding: readonly number[];
 }
 
+export interface WebPageToStore {
+  query: string;
+  title: string;
+  sourceUrl: string;
+  contentHash: string;
+  fetchedAt: Date;
+  expiresAt: Date;
+  documents: readonly WebDocumentToStore[];
+}
+
 export interface WebDocumentStore {
-  insert(document: WebDocumentToStore): Promise<void>;
+  /** Renews the TTL for a successfully re-fetched, unchanged page. */
+  refreshIfUnchanged(input: Pick<WebPageToStore,
+    'sourceUrl' | 'contentHash' | 'fetchedAt' | 'expiresAt'>): Promise<boolean>;
+  /** Replaces every stored chunk for a source URL with a changed page. */
+  replacePage(page: WebPageToStore): Promise<void>;
 }
 
 /** Decides whether transient web content from a URL may be persisted. */
@@ -109,23 +124,33 @@ export function createWebSearchNode(
         }
 
         const chunks = splitIntoChunks(text);
+        if (chunks.length === 0) continue;
+
+        const fetchedAt = now();
+        const expiresAt = new Date(fetchedAt);
+        expiresAt.setUTCDate(expiresAt.getUTCDate() + ttlDays);
+        const contentHash = createHash('sha256').update(text).digest('hex');
+
+        if (await webDocumentStore.refreshIfUnchanged({
+          sourceUrl: result.url,
+          contentHash,
+          fetchedAt,
+          expiresAt,
+        })) continue;
+
         const embeddings = await embeddingClient.embed(chunks);
 
         if (embeddings.length !== chunks.length) {
           throw new Error('Embedding client returned a different number of embeddings than web chunks');
         }
 
-        const fetchedAt = now();
-        const expiresAt = new Date(fetchedAt);
-        expiresAt.setUTCDate(expiresAt.getUTCDate() + ttlDays);
-
-        for (const [index, content] of chunks.entries()) {
+        const documents = chunks.map((content, index) => {
           const embedding = embeddings[index];
           if (!embedding) {
             throw new Error('Embedding client returned no embedding for a web chunk');
           }
 
-          await webDocumentStore.insert({
+          return {
             id: createId(),
             query,
             title: result.title,
@@ -134,8 +159,18 @@ export function createWebSearchNode(
             fetchedAt,
             expiresAt,
             embedding,
-          });
-        }
+          };
+        });
+
+        await webDocumentStore.replacePage({
+          query,
+          title: result.title,
+          sourceUrl: result.url,
+          contentHash,
+          fetchedAt,
+          expiresAt,
+          documents,
+        });
       }
     }
   };
