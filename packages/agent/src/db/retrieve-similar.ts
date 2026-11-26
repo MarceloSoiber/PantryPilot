@@ -1,4 +1,4 @@
-import { asc, cosineDistance } from 'drizzle-orm';
+import { and, asc, cosineDistance, gt } from 'drizzle-orm';
 import type { AnyPgColumn, PgDatabase, PgQueryResultHKT, PgTable } from 'drizzle-orm/pg-core';
 
 export interface RetrievedCorpusDocument {
@@ -25,6 +25,19 @@ export interface RetrievedCorpusDocument {
   distance: number;
 }
 
+export interface RetrievedWebDocument {
+  id: string;
+  query: string;
+  title: string;
+  content: string;
+  sourceUrl: string;
+  fetchedAt: Date;
+  expiresAt: Date;
+  distance: number;
+}
+
+export type RetrievedSimilarDocument = RetrievedCorpusDocument | RetrievedWebDocument;
+
 /** The subset of the corpus schema required for retrieval. */
 export type CorpusDocumentsTable = PgTable & {
   id: AnyPgColumn;
@@ -50,9 +63,23 @@ export type CorpusDocumentsTable = PgTable & {
   embedding: AnyPgColumn;
 };
 
+/** The subset of the temporary web-enrichment schema required for retrieval. */
+export type WebDocumentsTable = PgTable & {
+  id: AnyPgColumn;
+  query: AnyPgColumn;
+  title: AnyPgColumn;
+  content: AnyPgColumn;
+  sourceUrl: AnyPgColumn;
+  fetchedAt: AnyPgColumn;
+  expiresAt: AnyPgColumn;
+  embedding: AnyPgColumn;
+};
+
 export interface RetrieveSimilarDependencies {
   database: PgDatabase<PgQueryResultHKT>;
   corpusDocuments: CorpusDocumentsTable;
+  webDocuments?: WebDocumentsTable;
+  now?: () => Date;
 }
 
 /**
@@ -61,15 +88,15 @@ export interface RetrieveSimilarDependencies {
  * Drizzle's `cosineDistance` helper and sorted ascending (nearest first).
  */
 export function createRetrieveSimilar(
-  { database, corpusDocuments }: RetrieveSimilarDependencies,
-): (embedding: readonly number[], limit: number) => Promise<readonly RetrievedCorpusDocument[]> {
+  { database, corpusDocuments, webDocuments, now = () => new Date() }: RetrieveSimilarDependencies,
+): (embedding: readonly number[], limit: number) => Promise<readonly RetrievedSimilarDocument[]> {
   return async (embedding, limit) => {
     if (!Number.isInteger(limit) || limit < 1) {
       throw new RangeError('limit must be a positive integer');
     }
 
-    const distance = cosineDistance(corpusDocuments.embedding, [...embedding]);
-    const rows = await database
+    const corpusDistance = cosineDistance(corpusDocuments.embedding, [...embedding]);
+    const corpusRows = await database
       .select({
         id: corpusDocuments.id,
         recipeId: corpusDocuments.recipeId,
@@ -91,12 +118,36 @@ export function createRetrieveSimilar(
         sourceLicense: corpusDocuments.sourceLicense,
         sourceAccessedAt: corpusDocuments.sourceAccessedAt,
         sourceRevision: corpusDocuments.sourceRevision,
-        distance,
+        distance: corpusDistance,
       })
       .from(corpusDocuments)
-      .orderBy(asc(distance))
+      .orderBy(asc(corpusDistance))
       .limit(limit);
 
-    return rows as unknown as RetrievedCorpusDocument[];
+    if (!webDocuments) {
+      return corpusRows as unknown as RetrievedCorpusDocument[];
+    }
+
+    const webDistance = cosineDistance(webDocuments.embedding, [...embedding]);
+    const webRows = await database
+      .select({
+        id: webDocuments.id,
+        query: webDocuments.query,
+        title: webDocuments.title,
+        content: webDocuments.content,
+        sourceUrl: webDocuments.sourceUrl,
+        fetchedAt: webDocuments.fetchedAt,
+        expiresAt: webDocuments.expiresAt,
+        distance: webDistance,
+      })
+      .from(webDocuments)
+      .where(and(gt(webDocuments.expiresAt, now())))
+      .orderBy(asc(webDistance))
+      .limit(limit);
+
+    return [...(corpusRows as unknown as RetrievedCorpusDocument[]),
+      ...(webRows as unknown as RetrievedWebDocument[])]
+      .sort((left, right) => left.distance - right.distance)
+      .slice(0, limit);
   };
 }

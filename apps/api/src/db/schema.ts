@@ -55,3 +55,28 @@ export const corpusDocuments = pgTable(
     ),
   ],
 );
+
+/**
+ * Temporary, expiring documents recovered from web search. They remain separate
+ * from the curated corpus because their source policy and lifetime differ.
+ */
+export const webDocuments = pgTable(
+  'web_documents',
+  {
+    id: text('id').primaryKey(),
+    query: text('query').notNull(),
+    title: text('title').notNull(),
+    content: text('content').notNull(),
+    sourceUrl: text('source_url').notNull(),
+    fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    embedding: vector('embedding', { dimensions: 768 }).notNull(),
+  },
+  (table) => [
+    index('web_documents_expires_at').on(table.expiresAt),
+    index('web_documents_embedding_hnsw').using(
+      'hnsw',
+      table.embedding.op('vector_cosine_ops'),
+    ),
+  ],
+);
